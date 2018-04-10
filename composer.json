@@ -1,0 +1,26 @@
+{
+    "name": "rabbitcms/systemjs",
+    "license": "MIT",
+    "description": "RabbitCMS SystemJS integration",
+    "authors": [
+        {
+            "name": "Dmytro Kulyk",
+            "email": "lnkvisitor.ts@gmail.com"
+        }
+    ],
+    "require": {
+        "rabbitcms/modules": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RabbitCMS\\SystemJS\\": "src/"
+        }
+    },
+    "extra": {
+        "module": {
+            "providers": [
+                "RabbitCMS\\SystemJS\\ModuleProvider"
+            ]
+        }
+    }
+}
