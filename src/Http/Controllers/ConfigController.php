@@ -19,7 +19,7 @@ class ConfigController extends Controller
     public function make(): Response
     {
         return new Response(dispatch_now(new MakeConfigJob()), 200, [
-            'Content-Type' => 'application/json'
+            'Content-Type' => 'application/javascript'
         ]);
     }
 }

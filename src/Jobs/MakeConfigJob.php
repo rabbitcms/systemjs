@@ -27,10 +27,12 @@ class MakeConfigJob
             'meta' => [$config['meta'] ?? []],
             'depCache' => [$config['depCache'] ?? []],
             'bundles' => [$config['bundles'] ?? []],
+            'packages' => [$config['packages'] ?? []],
         ];
-        $config = \ array_map(function (array $arrays) {
-            return \array_merge(...$arrays);
-        }, \array_reduce(Modules::enabled(), function (array $config, Module $module) {
+        $prepare = \array_reduce(Modules::enabled(), function (array $config, Module $module) {
+            if (!$module->config('systemjs')) {
+                return $config;
+            }
             $config['paths'][] = [
                 "@{$module->getName()}/" => str_replace(asset(''), '', "/{$module->asset('')}/")
             ];
@@ -49,12 +51,17 @@ class MakeConfigJob
             }
 
             return $config;
+        }, $prepare);
 
-        }, $prepare));
+        $config = \array_map(function (array $arrays) {
+            return \array_merge(...$arrays);
+        }, $prepare);
 
-        return 'SystemJS.config(' . \json_encode(
-                $config,
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-            ) . ');';
+        $config = \array_filter($config);
+
+        $config['pluginFirst'] = true;
+        $config['warnings'] = true;
+
+        return self::module()->view('config', ['config' => $config])->render();
     }
 }
