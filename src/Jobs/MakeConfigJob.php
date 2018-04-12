@@ -6,6 +6,7 @@ namespace RabbitCMS\SystemJS\Jobs;
 use RabbitCMS\Modules\Concerns\BelongsToModule;
 use RabbitCMS\Modules\Facades\Modules;
 use RabbitCMS\Modules\Module;
+use RabbitCMS\Modules\Theme;
 
 /**
  * Class MakeConfigJob
@@ -53,6 +54,8 @@ class MakeConfigJob
             return $config;
         }, $prepare);
 
+        $prepare = $this->prepareTheme($prepare, Modules::getCurrentTheme());
+
         $config = \array_map(function (array $arrays) {
             return \array_merge(...$arrays);
         }, $prepare);
@@ -63,5 +66,38 @@ class MakeConfigJob
         $config['warnings'] = true;
 
         return self::module()->view('config', ['config' => $config])->render();
+    }
+
+    /**
+     * @param array       $prepared
+     * @param null|string $themeName
+     *
+     * @return array
+     */
+    private function prepareTheme(array $prepared, ?string $themeName): array
+    {
+        if ($themeName !== null) {
+            $theme = Modules::getThemeByName($themeName);
+            $prepared = $this->prepareTheme($prepared, $theme->getExtends());
+            $prepared['paths'][] = [
+                "@theme-{$theme->getName()}/" =>
+                    str_replace(asset(''), '',
+                        '/' . asset(Modules::getThemesAssetsRoot() . "/{$theme->getName()}") . '/')
+            ];
+            $path = $theme->getPath('config/systemjs.php');
+            if (!\is_file($path)) {
+                return $prepared;
+            }
+            $moduleConfig = (function (Theme $theme, string $path) {
+                return require($path);
+            })($theme, $path);
+            foreach ($prepared as $node => &$arrays) {
+                if (!\array_key_exists($node, $moduleConfig)) {
+                    continue;
+                }
+                $arrays[] = $moduleConfig[$node];
+            }
+        }
+        return $prepared;
     }
 }
