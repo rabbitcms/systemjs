@@ -6,7 +6,7 @@ JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_SLASHES | J
 System.register('locale',[], function($__export) {
     return {
         execute: function() {
-            $__export('locale', html.attributes[lang].value);
+            $__export('locale', document.documentElement.attributes['lang'].value);
         }
     };
 });

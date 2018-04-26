@@ -1,0 +1,11 @@
+{
+    "devDependencies": {
+        "@types/jquery": "^3.3.1",
+        "@types/promise": "^7.1.30",
+        "tslib": "^1.9.0",
+        "@types/systemjs": "^0.20.6",
+        "@types/bootstrap": "^3.3",
+        "@types/google.analytics": "0.0.39",
+        "@types/jquery.validation": "^1.16.4"
+    }
+}
