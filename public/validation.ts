@@ -13,7 +13,7 @@ let locales = ['uk', 'ru'],
         }
     };
 
-export async function validate(form: JQuery, options: JQueryValidation.ValidationOptions): Promise<JQueryValidation.Validator> {
+export async function validate(form: JQuery, options?: JQueryValidation.ValidationOptions): Promise<JQueryValidation.Validator> {
     await initialize();
     return form.validate(options);
 }

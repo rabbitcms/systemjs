@@ -11,12 +11,16 @@ System.register('locale',[], function($__export) {
     };
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('[data-require]').forEach(function (element) {
-        System.import(element.attributes['data-require'].value).then(function(module) {
-            if(element.attributes.hasOwnProperty('data-import')){
-                module[element.attributes['data-import'].value](element);
+function SystemJSScan(element) {
+    element.querySelectorAll('[data-require]').forEach(function (element) {
+        System.import(element.getAttribute('data-require')).then(function(module) {
+            if(element.hasAttribute('data-import')){
+                module[element.getAttribute('data-import')](element, element.getAttribute('data-param'));
             }
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    SystemJSScan(document);
 });
