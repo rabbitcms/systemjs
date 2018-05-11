@@ -16,11 +16,12 @@ System.register([], function (exports_1, context_1) {
                  * @param {Function} fn
                  * @returns {this}
                  */
-                EventEmitter.prototype.subscribe = function (eventName, fn) {
+                EventEmitter.prototype.subscribe = function (eventName, fn, once) {
+                    if (once === void 0) { once = false; }
                     if (!this._events[eventName]) {
                         this._events[eventName] = [];
                     }
-                    this._events[eventName].push(fn);
+                    this._events[eventName].push([fn, once]);
                     this.onSubscribe(eventName, fn);
                     return this;
                 };
@@ -32,7 +33,7 @@ System.register([], function (exports_1, context_1) {
                 EventEmitter.prototype.unsubscribe = function (eventName, fn) {
                     if (this._events[eventName]) {
                         this._events[eventName] = this._events[eventName].filter(function (e) {
-                            return e !== fn;
+                            return e[0] !== fn;
                         });
                     }
                     return this;
@@ -44,17 +45,7 @@ System.register([], function (exports_1, context_1) {
                  * @returns {EventEmitter}
                  */
                 EventEmitter.prototype.once = function (eventName, fn) {
-                    var _this = this;
-                    var func = function () {
-                        var args = [];
-                        for (var _i = 0; _i < arguments.length; _i++) {
-                            args[_i] = arguments[_i];
-                        }
-                        _this.unsubscribe(eventName, func);
-                        fn.apply(null, args);
-                    };
-                    this.subscribe(eventName, func);
-                    return this;
+                    return this.subscribe(eventName, fn, true);
                 };
                 EventEmitter.prototype.emit = function (eventName) {
                     var args = [];
@@ -63,8 +54,9 @@ System.register([], function (exports_1, context_1) {
                     }
                     var event = this._events[eventName];
                     if (event) {
-                        event.forEach(function (fn) {
-                            fn.apply(null, args);
+                        this._events[eventName] = event.filter(function (fn) {
+                            fn[0].apply(null, args);
+                            return !fn[1];
                         });
                     }
                     return this;

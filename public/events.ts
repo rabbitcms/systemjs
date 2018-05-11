@@ -1,7 +1,7 @@
 import {Client} from "../../../../modules/clients/public/js/clients";
 
 export abstract class EventEmitter {
-    protected _events: { [event: string]: Function[] } = {};
+    protected _events: { [event: string]: [Function, boolean][] } = {};
 
     protected onSubscribe(eventName: string, fn: Function) {
     }
@@ -11,12 +11,12 @@ export abstract class EventEmitter {
      * @param {Function} fn
      * @returns {this}
      */
-    public subscribe(eventName: string, fn: Function): EventEmitter {
+    public subscribe(eventName: string, fn: Function, once: boolean = false): EventEmitter {
         if (!this._events[eventName]) {
             this._events[eventName] = [];
         }
 
-        this._events[eventName].push(fn);
+        this._events[eventName].push([fn, once]);
 
         this.onSubscribe(eventName, fn);
 
@@ -31,7 +31,7 @@ export abstract class EventEmitter {
     public unsubscribe(eventName: string, fn: Function): EventEmitter {
         if (this._events[eventName]) {
             this._events[eventName] = this._events[eventName].filter((e) => {
-                return e !== fn;
+                return e[0] !== fn;
             })
         }
 
@@ -45,20 +45,15 @@ export abstract class EventEmitter {
      * @returns {EventEmitter}
      */
     public once(eventName: string, fn: Function): EventEmitter {
-        let func = (...args) => {
-            this.unsubscribe(eventName, func);
-            fn.apply(null, args);
-        };
-        this.subscribe(eventName, func);
-
-        return this;
+        return this.subscribe(eventName, fn, true);
     }
 
     protected emit(eventName: string, ...args): EventEmitter {
         const event = this._events[eventName];
         if (event) {
-            event.forEach(fn => {
-                fn.apply(null, args);
+            this._events[eventName] = event.filter(fn => {
+                fn[0].apply(null, args);
+                return !fn[1];
             });
         }
         return this;
