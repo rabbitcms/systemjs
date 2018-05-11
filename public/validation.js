@@ -1,4 +1,4 @@
-System.register(["tslib", "locale"], function (exports_1, context_1) {
+System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -21,6 +21,8 @@ System.register(["tslib", "locale"], function (exports_1, context_1) {
             function (tslib_1_1) {
                 tslib_1 = tslib_1_1;
             },
+            function (_1) {
+            },
             function (locale_1_1) {
                 locale_1 = locale_1_1;
             }
@@ -34,13 +36,13 @@ System.register(["tslib", "locale"], function (exports_1, context_1) {
                             initialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
                                 return [2 /*return*/, void 0];
                             }); }); };
-                            return [4 /*yield*/, System.import("jquery.validation", __moduleName)];
+                            return [4 /*yield*/, SystemJS.import("jquery.validation", __moduleName)];
                         case 1:
                             _a.sent();
-                            return [4 /*yield*/, System.import("./validation/methods", __moduleName)];
+                            return [4 /*yield*/, SystemJS.import("./validation/methods", __moduleName)];
                         case 2:
                             _a.sent();
-                            return [4 /*yield*/, System.import("jquery.validation/localization/messages_" + locale_1.locale, __moduleName)];
+                            return [4 /*yield*/, SystemJS.import("jquery.validation/localization/messages_" + locale_1.locale, __moduleName)];
                         case 3:
                             _a.sent();
                             if (!(locales.indexOf(locale_1.locale) >= 0)) return [3 /*break*/, 5];

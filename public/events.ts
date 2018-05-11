@@ -1,5 +1,3 @@
-import {Client} from "../../../../modules/clients/public/js/clients";
-
 export abstract class EventEmitter {
     protected _events: { [event: string]: [Function, boolean][] } = {};
 
