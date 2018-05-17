@@ -12,15 +12,24 @@ System.register('locale',[], function($__export) {
 });
 
 function SystemJSScan(element) {
-    element.querySelectorAll('[data-require]').forEach(function (element) {
+    var list = element.querySelectorAll('[data-require]'),i;
+    for(i = 0; i < list.length; ++i) {
+        var element = list.item(i);
         System.import(element.getAttribute('data-require')).then(function(module) {
             if(element.hasAttribute('data-import')){
                 module[element.getAttribute('data-import')](element, element.getAttribute('data-param'));
             }
         });
-    });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     SystemJSScan(document);
 });
+
+//Polyfill for IE and JQuery
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+  };
+}
