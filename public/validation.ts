@@ -1,3 +1,4 @@
+///<reference path="node_modules/@types/jquery.validation/index.d.ts"/>
 import 'jquery';
 import {locale} from 'locale';
 

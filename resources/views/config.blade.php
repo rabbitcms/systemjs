@@ -14,12 +14,13 @@ System.register('locale',[], function($__export) {
 function SystemJSScan(element) {
     var list = element.querySelectorAll('[data-require]'),i;
     for(i = 0; i < list.length; ++i) {
-        var element = list.item(i);
-        System.import(element.getAttribute('data-require')).then(function(module) {
-            if(element.hasAttribute('data-import')){
-                module[element.getAttribute('data-import')](element, element.getAttribute('data-param'));
-            }
-        });
+        (function(element) {
+            System.import(element.getAttribute('data-require')).then(function(module) {
+                if(element.hasAttribute('data-import')){
+                    module[element.getAttribute('data-import')](element, element.getAttribute('data-param'));
+                }
+            });
+        })(list.item(i));
     }
 }
 
