@@ -9,7 +9,7 @@ System.register(["tslib", "jquery", "./validation"], function (exports_1, contex
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        form.append();
+                        form = jquery_1.default(form);
                         lock = false, options = {
                             ignore: '',
                             highlight: function (element) {
@@ -39,7 +39,7 @@ System.register(["tslib", "jquery", "./validation"], function (exports_1, contex
                                             _a.label = 1;
                                         case 1:
                                             _a.trys.push([1, 3, 4, 5]);
-                                            return [4 /*yield*/, $.ajax($.extend(true, {
+                                            return [4 /*yield*/, ajax($.extend(true, {
                                                     method: form.attr('method'),
                                                     url: form.attr('action'),
                                                     data: form.serialize(),

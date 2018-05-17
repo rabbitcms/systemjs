@@ -2,7 +2,7 @@ import jQuery from 'jquery';
 import {validate} from "./validation";
 
 export async function form(form: JQuery<HTMLFormElement>, ajax: (settings?: JQuery.AjaxSettings) => Promise<any> = jQuery.ajax): Promise<JQueryValidation.Validator> {
-    form.append()
+    form = <JQuery<HTMLFormElement>>jQuery(form);
     let lock = false, validator,
         options: JQueryValidation.ValidationOptions = {
             ignore: '',
@@ -28,7 +28,7 @@ export async function form(form: JQuery<HTMLFormElement>, ajax: (settings?: JQue
                 lock = true;
 
                 try {
-                    let data = await $.ajax($.extend(true, {
+                    let data = await ajax($.extend(true, {
                         method: form.attr('method'),
                         url: form.attr('action'),
                         data: form.serialize(),
