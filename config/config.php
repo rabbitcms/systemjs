@@ -17,7 +17,8 @@ return [
         'tslib' => 'cdnjs/tslib/1.9.0/tslib.min.js',
         'select2' => 'cdnjs/select2/4.0.3/js/select2.min.js',
         'jquery.validation' => 'cdnjs/jquery-validate/1.17.0',
-        '@common/'=>'@systemjs/',
+        'bootstrap-datepicker' => 'cdnjs/bootstrap-datepicker/1.8.0',
+        '@common' => '@systemjs/',
     ],
     'depCache' => [
         'select2' => [
@@ -33,7 +34,7 @@ return [
         'jquery.validation' => [
             'main' => 'jquery.validate.min',
             'defaultExtension' => 'js',
-            'format' => 'global',
+            'format' => 'amd',
             'map' => [
                 './additional-methods' => './additional-methods.min'
             ],
@@ -43,7 +44,18 @@ return [
                 ]
             ]
         ],
+        'bootstrap-datepicker' => [
+            'main' => 'js/bootstrap-datepicker.min',
+            'defaultExtension' => 'js',
+            'format' => 'amd',
+            'meta' => [
+                'locales/*' => [
+                    'format' => 'global'
+                ]
+            ]
+        ],
         '@common' => [
+            'main' => 'common',
             'defaultExtension' => 'js?' . time(),
             'meta' => [
                 'validation/*' => [
