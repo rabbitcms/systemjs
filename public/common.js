@@ -1,4 +1,4 @@
-System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
+System.register(["tslib", "jquery"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -38,7 +38,7 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
                     case 0:
                         $form = jquery_1.default(form), lock = false, options = {
                             submitHandler: function (form, e) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var data, e_1;
+                                var data;
                                 return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -49,17 +49,17 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
                                             lock = true;
                                             _a.label = 1;
                                         case 1:
-                                            _a.trys.push([1, 3, 4, 5]);
-                                            return [4 /*yield*/, ajax($.extend(true, {
+                                            _a.trys.push([1, , 3, 4]);
+                                            return [4 /*yield*/, ajax($.extend({
                                                     method: $form.attr('method'),
                                                     url: $form.attr('action'),
                                                     data: $form.serialize(),
                                                     error: function (response) {
                                                         if (response.status === 422) {
                                                             validator.showErrors(Object.keys(response.responseJSON.errors).reduce(function (errors, key) {
-                                                                errors[key.split('.').map(function (value, index) {
-                                                                    return index === 0 ? value : '[' + value + ']';
-                                                                }).join('')] = response.responseJSON.errors[key][0];
+                                                                errors[key.split('.')
+                                                                    .map(function (value, index) { return index === 0 ? value : '[' + value + ']'; })
+                                                                    .join('')] = response.responseJSON.errors[key][0];
                                                                 return errors;
                                                             }, {}));
                                                         }
@@ -77,15 +77,12 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
                                         case 2:
                                             data = _a.sent();
                                             $form.triggerHandler('success', data);
-                                            return [3 /*break*/, 5];
+                                            return [3 /*break*/, 4];
                                         case 3:
-                                            e_1 = _a.sent();
-                                            return [3 /*break*/, 5];
-                                        case 4:
                                             $form.removeClass('sending');
                                             lock = false;
                                             return [7 /*endfinally*/];
-                                        case 5: return [2 /*return*/];
+                                        case 4: return [2 /*return*/];
                                     }
                                 });
                             }); }
@@ -107,14 +104,43 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
                     case 1:
                         _a.sent();
                         return [2 /*return*/, jquery_1.default(el).datepicker(jquery_1.default.extend(options, {
-                                language: locale_1.locale
+                                language: locale
                             }))];
                 }
             });
         });
     }
     exports_1("datepicker", datepicker);
-    var _this, tslib_1, jquery_1, locale_1, locales, validationInitialize, datepickerInitialize;
+    function scan(element) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            var list, i;
+            return tslib_1.__generator(this, function (_a) {
+                list = element.querySelectorAll('[data-require]');
+                for (i = 0; i < list.length; ++i) {
+                    (function (element) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                        var module;
+                        return tslib_1.__generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, SystemJS.import(element.getAttribute('data-require'))];
+                                case 1:
+                                    module = _a.sent();
+                                    if (!element.hasAttribute('data-import')) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, module[element.getAttribute('data-import')](element, element.getAttribute('data-param'))];
+                                case 2:
+                                    _a.sent();
+                                    _a.label = 3;
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); })(list.item(i)).catch(console.log);
+                }
+                return [2 /*return*/];
+            });
+        });
+    }
+    exports_1("scan", scan);
+    var _this, tslib_1, jquery_1, locale, locales, validationInitialize, datepickerInitialize;
     return {
         setters: [
             function (tslib_1_1) {
@@ -122,15 +148,10 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
             },
             function (jquery_1_1) {
                 jquery_1 = jquery_1_1;
-            },
-            function (locale_2_1) {
-                exports_1({
-                    "locale": locale_2_1["locale"]
-                });
-                locale_1 = locale_2_1;
             }
         ],
         execute: function () {
+            exports_1("locale", locale = document.documentElement.getAttribute('lang') || '');
             locales = ['uk', 'ru'], validationInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return tslib_1.__generator(this, function (_a) {
@@ -145,11 +166,11 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
                             return [4 /*yield*/, SystemJS.import("@common/validation/methods")];
                         case 2:
                             _a.sent();
-                            return [4 /*yield*/, SystemJS.import("jquery.validation/localization/messages_" + locale_1.locale)];
+                            return [4 /*yield*/, SystemJS.import("jquery.validation/localization/messages_" + locale)];
                         case 3:
                             _a.sent();
-                            if (!(locales.indexOf(locale_1.locale) >= 0)) return [3 /*break*/, 5];
-                            return [4 /*yield*/, SystemJS.import("@common/validation/" + locale_1.locale)];
+                            if (!(locales.indexOf(locale) >= 0)) return [3 /*break*/, 5];
+                            return [4 /*yield*/, SystemJS.import("@common/validation/" + locale)];
                         case 4:
                             _a.sent();
                             _a.label = 5;
@@ -169,7 +190,7 @@ System.register(["tslib", "jquery", "locale"], function (exports_1, context_1) {
                             return [4 /*yield*/, SystemJS.import("bootstrap-datepicker")];
                         case 1:
                             _a.sent();
-                            return [4 /*yield*/, SystemJS.import("bootstrap-datepicker/locales/bootstrap-datepicker." + locale_1.locale + ".min")];
+                            return [4 /*yield*/, SystemJS.import("bootstrap-datepicker/locales/bootstrap-datepicker." + locale + ".min")];
                         case 2:
                             _a.sent();
                             return [2 /*return*/];

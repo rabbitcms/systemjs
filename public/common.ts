@@ -1,10 +1,10 @@
 ///<reference path="node_modules/@types/systemjs/index.d.ts"/>
 ///<reference path="node_modules/@types/jquery.validation/index.d.ts"/>
+///<reference path="node_modules/@types/bootstrap-datepicker/index.d.ts"/>
 ///<reference path="common.d.ts"/>
 import jQuery from 'jquery';
 
-export {locale} from 'locale';
-import {locale} from 'locale';
+export let locale:string = document.documentElement.getAttribute('lang') || '';
 
 let locales = ['uk', 'ru'],
     validationInitialize = async () => {
@@ -17,7 +17,7 @@ let locales = ['uk', 'ru'],
         }
     };
 
-export async function validate(form: HTMLFormElement, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
+export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
     await validationInitialize();
     return jQuery(form).validate(jQuery.extend({
         ignore: '',
@@ -34,7 +34,7 @@ export async function validate(form: HTMLFormElement, options: JQueryValidation.
     }, options));
 }
 
-export async function form(form: HTMLFormElement, ajax: (settings?: JQuery.AjaxSettings) => Promise<any> = jQuery.ajax): Promise<JQueryValidation.Validator> {
+export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax: (settings?: JQuery.AjaxSettings) => Promise<any> = jQuery.ajax): Promise<JQueryValidation.Validator> {
     let $form = jQuery(form), lock = false, validator,
         options: JQueryValidation.ValidationOptions = {
             submitHandler: async (form: HTMLFormElement, e: JQueryEventObject) => {
@@ -43,18 +43,17 @@ export async function form(form: HTMLFormElement, ajax: (settings?: JQuery.AjaxS
                     return;
                 }
                 lock = true;
-
                 try {
-                    let data = await ajax($.extend(true, {
+                    let data = await ajax($.extend({
                         method: $form.attr('method'),
                         url: $form.attr('action'),
                         data: $form.serialize(),
-                        error: function (response) {
+                        error(response) {
                             if (response.status === 422) {
-                                validator.showErrors(Object.keys(response.responseJSON.errors).reduce(function (errors, key) {
-                                    errors[key.split('.').map(function (value, index) {
-                                        return index === 0 ? value : '[' + value + ']';
-                                    }).join('')] = response.responseJSON.errors[key][0];
+                                validator.showErrors(Object.keys(response.responseJSON.errors).reduce((errors, key) => {
+                                    errors[key.split('.')
+                                        .map((value, index) => index === 0 ? value : '[' + value + ']')
+                                        .join('')] = response.responseJSON.errors[key][0];
                                     return errors;
                                 }, {}));
                             } else {
@@ -68,11 +67,8 @@ export async function form(form: HTMLFormElement, ajax: (settings?: JQuery.AjaxS
                             contentType: false,
                         }
                         : {}));
-                    $form.triggerHandler('success', data)
-                } catch (e) {
-
-                }
-                finally {
+                    $form.triggerHandler('success', data);
+                } finally {
                     $form.removeClass('sending');
                     lock = false;
                 }
@@ -81,7 +77,6 @@ export async function form(form: HTMLFormElement, ajax: (settings?: JQuery.AjaxS
     $form.triggerHandler('init', options);
     return validator = await validate(form, options);
 }
-
 
 let datepickerInitialize = async () => {
     datepickerInitialize = async () => void 0;
@@ -95,4 +90,16 @@ export async function datepicker(el: HTMLDivElement | HTMLInputElement, options:
     return <JQuery<HTMLDivElement | HTMLInputElement>>jQuery(el).datepicker(jQuery.extend(options, {
         language: locale
     }));
+}
+
+export async function scan(element) {
+    let list = element.querySelectorAll('[data-require]');
+    for (let i = 0; i < list.length; ++i) {
+        (async (element) => {
+            let module = await SystemJS.import(element.getAttribute('data-require'));
+            if (element.hasAttribute('data-import')) {
+                await module[element.getAttribute('data-import')](element, element.getAttribute('data-param'));
+            }
+        })(list.item(i)).catch(console.log);
+    }
 }
