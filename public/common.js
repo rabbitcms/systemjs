@@ -119,12 +119,27 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                 list = element.querySelectorAll('[data-require]');
                 for (i = 0; i < list.length; ++i) {
                     (function (element) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                        var _this = this;
                         var module;
                         return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, SystemJS.import(element.getAttribute('data-require'))];
                                 case 1:
                                     module = _a.sent();
+                                    if (element.hasAttribute('data-bind')) {
+                                        element.addEventListener('click', function (e) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                            return tslib_1.__generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        e.preventDefault();
+                                                        return [4 /*yield*/, module[element.getAttribute('data-bind')]()];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); });
+                                    }
                                     if (!element.hasAttribute('data-import')) return [3 /*break*/, 3];
                                     return [4 /*yield*/, module[element.getAttribute('data-import')](element, element.getAttribute('data-param'))];
                                 case 2:

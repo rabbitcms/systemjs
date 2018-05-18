@@ -4,7 +4,7 @@
 ///<reference path="common.d.ts"/>
 import jQuery from 'jquery';
 
-export let locale:string = document.documentElement.getAttribute('lang') || '';
+export let locale: string = document.documentElement.getAttribute('lang') || '';
 
 let locales = ['uk', 'ru'],
     validationInitialize = async () => {
@@ -92,14 +92,23 @@ export async function datepicker(el: HTMLDivElement | HTMLInputElement, options:
     }));
 }
 
-export async function scan(element) {
+export async function scan(element: Element) {
     let list = element.querySelectorAll('[data-require]');
     for (let i = 0; i < list.length; ++i) {
-        (async (element) => {
-            let module = await SystemJS.import(element.getAttribute('data-require'));
-            if (element.hasAttribute('data-import')) {
-                await module[element.getAttribute('data-import')](element, element.getAttribute('data-param'));
+        (async (element: Element) => {
+            let module = await SystemJS.import(<string>element.getAttribute('data-require'));
+
+            if (element.hasAttribute('data-bind')) {
+                element.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await module[<string>element.getAttribute('data-bind')]();
+                });
             }
+
+            if (element.hasAttribute('data-import')) {
+                await module[<string>element.getAttribute('data-import')](element, element.getAttribute('data-param'));
+            }
+
         })(list.item(i)).catch(console.log);
     }
 }
