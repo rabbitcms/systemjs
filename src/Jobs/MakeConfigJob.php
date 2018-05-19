@@ -29,6 +29,7 @@ class MakeConfigJob
             'depCache' => [$config['depCache'] ?? []],
             'bundles' => [$config['bundles'] ?? []],
             'packages' => [$config['packages'] ?? []],
+            'packageConfigPaths' => [$config['packageConfigPaths'] ?? []],
         ];
         $prepare = \array_reduce(Modules::enabled(), function (array $config, Module $module) {
             if (!$module->config('systemjs')) {

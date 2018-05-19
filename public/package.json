@@ -7,6 +7,10 @@
         "@types/bootstrap": "^3.3",
         "@types/google.analytics": "0.0.39",
         "@types/jquery.validation": "^1.16.4",
-        "@types/bootstrap-datepicker": "0.0.13"
+        "@types/bootstrap-datepicker": "0.0.13",
+        "@types/gapi.youtube": "^3.0.34"
+    },
+    "dependencies": {
+        "@types/youtube": "0.0.32"
     }
 }

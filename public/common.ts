@@ -114,3 +114,21 @@ export async function scan(element: Element) {
         })(list.item(i)).catch(console.log);
     }
 }
+
+let youtubeBackgroundInitialize = (): Promise<void> => {
+    let promise: Promise<void> = (async (): Promise<void> => {
+        (await SystemJS.import('youtube'))
+        // @ts-ignore
+            .ready(await SystemJS.import('jquery.mb.YTPlayer'));
+    })();
+    youtubeBackgroundInitialize = async () => promise;
+    return promise;
+};
+
+export async function youtubeBackground(el: HTMLElement, options?) {
+    await youtubeBackgroundInitialize();
+    if (!el.id) {
+        el.id = "bgyt" + new Date().getTime()
+    }
+    jQuery(`#${el.id}`).YTPlayer(options || {});
+}

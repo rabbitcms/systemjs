@@ -19,6 +19,8 @@ return [
         'jquery.validation' => 'cdnjs/jquery-validate/1.17.0',
         'bootstrap-datepicker' => 'cdnjs/bootstrap-datepicker/1.8.0',
         '@common' => '@systemjs/',
+        'youtube' => 'https://www.youtube.com/iframe_api',
+        'jquery.mb.YTPlayer' => 'cdnjs/jquery.mb.YTPlayer/3.2.1',
     ],
     'depCache' => [
         'select2' => [
@@ -28,7 +30,18 @@ return [
     'meta' => [
         '*.less' => ['loader' => 'less'],
         '*.css' => ['loader' => 'css'],
-        '*.json' => ['loader' => 'json']
+        '*.json' => ['loader' => 'json'],
+        'youtube' => ['scriptLoad' => true, 'format' => 'global', 'exports' => 'YT'],
+        'jquery.mb.YTPlayer/jquery.mb.YTPlayer.min.js' => [
+            'exports' => 'onYouTubeIframeAPIReady',
+            'format' => 'global',
+            'deps' => [
+                'youtube',
+                'jquery',
+                'jquery.mb.YTPlayer/css/jquery.mb.YTPlayer.min.css',
+
+            ]
+        ]
     ],
     'packages' => [
         'jquery.validation' => [
@@ -53,6 +66,11 @@ return [
                     'format' => 'global'
                 ]
             ]
+        ],
+        'jquery.mb.YTPlayer' => [
+            'main' => 'jquery.mb.YTPlayer.min',
+            'defaultExtension' => 'js',
+            'format' => 'global'
         ],
         '@common' => [
             'main' => 'common',

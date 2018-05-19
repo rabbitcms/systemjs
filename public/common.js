@@ -154,7 +154,24 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         });
     }
     exports_1("scan", scan);
-    var _this, tslib_1, jquery_1, locale, locales, validationInitialize, datepickerInitialize;
+    function youtubeBackground(el, options) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, youtubeBackgroundInitialize()];
+                    case 1:
+                        _a.sent();
+                        if (!el.id) {
+                            el.id = "bgyt" + new Date().getTime();
+                        }
+                        jquery_1.default("#" + el.id).YTPlayer(options || {});
+                        return [2 /*return*/];
+                }
+            });
+        });
+    }
+    exports_1("youtubeBackground", youtubeBackground);
+    var _this, tslib_1, jquery_1, locale, locales, validationInitialize, datepickerInitialize, youtubeBackgroundInitialize;
     return {
         setters: [
             function (tslib_1_1) {
@@ -192,6 +209,26 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                     return [2 /*return*/, promise];
                 });
             }); };
+            youtubeBackgroundInitialize = function () {
+                var promise = (function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                    var _a, _b;
+                    return tslib_1.__generator(this, function (_c) {
+                        switch (_c.label) {
+                            case 0: return [4 /*yield*/, SystemJS.import('youtube')];
+                            case 1:
+                                _b = (_a = (_c.sent())).ready;
+                                return [4 /*yield*/, SystemJS.import('jquery.mb.YTPlayer')];
+                            case 2:
+                                _b.apply(_a, [_c.sent()]);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); })();
+                youtubeBackgroundInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
+                    return [2 /*return*/, promise];
+                }); }); };
+                return promise;
+            };
         }
     };
 });
