@@ -13,7 +13,7 @@ return [
         'text' => 'unpkg/systemjs-plugin-text/text.js',
         'json' => 'unpkg/systemjs-plugin-json/json.js',
         'lesscss' => 'cdnjs/less.js/3.0.1/less.min.js',
-        'jquery' => 'cdnjs/jquery/2.2.4/jquery.min.js',
+        'jquery' => 'cdnjs/jquery/3.3.1/jquery.min.js',
         'tslib' => 'cdnjs/tslib/1.9.0/tslib.min.js',
         'select2' => 'cdnjs/select2/4.0.3/js/select2.min.js',
         'jquery.validation' => 'cdnjs/jquery-validate/1.17.0',
