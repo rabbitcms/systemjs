@@ -29,7 +29,6 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
     }
     exports_1("validate", validate);
     function form(form, ajax) {
-        if (ajax === void 0) { ajax = jquery_1.default.ajax; }
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
             var $form, lock, validator, options;
@@ -50,7 +49,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             _a.label = 1;
                                         case 1:
                                             _a.trys.push([1, , 3, 4]);
-                                            return [4 /*yield*/, ajax($.extend({
+                                            return [4 /*yield*/, (ajax || jquery_1.default.ajax)($.extend({
                                                     method: $form.attr('method'),
                                                     url: $form.attr('action'),
                                                     data: $form.serialize(),
@@ -168,48 +167,29 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         execute: function () {
             exports_1("locale", locale = document.documentElement.getAttribute('lang') || '');
             locales = ['uk', 'ru'], validationInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                var _this = this;
+                var promise;
                 return tslib_1.__generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            validationInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
-                                return [2 /*return*/, void 0];
-                            }); }); };
-                            return [4 /*yield*/, SystemJS.import("jquery.validation")];
-                        case 1:
-                            _a.sent();
-                            return [4 /*yield*/, SystemJS.import("@common/validation/methods")];
-                        case 2:
-                            _a.sent();
-                            return [4 /*yield*/, SystemJS.import("jquery.validation/localization/messages_" + locale)];
-                        case 3:
-                            _a.sent();
-                            if (!(locales.indexOf(locale) >= 0)) return [3 /*break*/, 5];
-                            return [4 /*yield*/, SystemJS.import("@common/validation/" + locale)];
-                        case 4:
-                            _a.sent();
-                            _a.label = 5;
-                        case 5: return [2 /*return*/];
-                    }
+                    promise = SystemJS.import("jquery.validation")
+                        .then(function () { return SystemJS.import("@common/validation/methods"); })
+                        .then(function () { return SystemJS.import("jquery.validation/localization/messages_" + locale); })
+                        .then(function () { return locales.indexOf(locale) >= 0 && SystemJS.import("@common/validation/" + locale); });
+                    validationInitialize = function () { return promise; };
+                    return [2 /*return*/, promise];
                 });
             }); };
             datepickerInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                 var _this = this;
+                var promise;
                 return tslib_1.__generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            datepickerInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
-                                return [2 /*return*/, void 0];
-                            }); }); };
-                            SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css');
-                            return [4 /*yield*/, SystemJS.import("bootstrap-datepicker")];
-                        case 1:
-                            _a.sent();
-                            return [4 /*yield*/, SystemJS.import("bootstrap-datepicker/locales/bootstrap-datepicker." + locale + ".min")];
-                        case 2:
-                            _a.sent();
-                            return [2 /*return*/];
-                    }
+                    promise = Promise.all([
+                        SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css'),
+                        SystemJS.import("bootstrap-datepicker"),
+                        SystemJS.import("bootstrap-datepicker/locales/bootstrap-datepicker." + locale + ".min")
+                    ]);
+                    datepickerInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
+                        return [2 /*return*/, promise];
+                    }); }); };
+                    return [2 /*return*/, promise];
                 });
             }); };
         }

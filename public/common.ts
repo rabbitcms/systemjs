@@ -1,20 +1,18 @@
 ///<reference path="node_modules/@types/systemjs/index.d.ts"/>
 ///<reference path="node_modules/@types/jquery.validation/index.d.ts"/>
 ///<reference path="node_modules/@types/bootstrap-datepicker/index.d.ts"/>
-///<reference path="common.d.ts"/>
 import jQuery from 'jquery';
 
 export let locale: string = document.documentElement.getAttribute('lang') || '';
 
 let locales = ['uk', 'ru'],
-    validationInitialize = async () => {
-        validationInitialize = async () => void 0;
-        await SystemJS.import(`jquery.validation`);
-        await SystemJS.import(`@common/validation/methods`);
-        await SystemJS.import(`jquery.validation/localization/messages_${locale}`,);
-        if (locales.indexOf(locale) >= 0) {
-            await SystemJS.import(`@common/validation/${locale}`);
-        }
+    validationInitialize = async (): Promise<void> => {
+        let promise = SystemJS.import(`jquery.validation`)
+            .then(() => SystemJS.import(`@common/validation/methods`))
+            .then(() => SystemJS.import(`jquery.validation/localization/messages_${locale}`))
+            .then(() => locales.indexOf(locale) >= 0 && SystemJS.import(`@common/validation/${locale}`));
+        validationInitialize = () => promise;
+        return promise;
     };
 
 export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
@@ -34,7 +32,7 @@ export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, 
     }, options));
 }
 
-export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax: (settings?: JQuery.AjaxSettings) => Promise<any> = jQuery.ajax): Promise<JQueryValidation.Validator> {
+export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax?: (settings?: JQuery.AjaxSettings) => Promise<any>): Promise<JQueryValidation.Validator> {
     let $form = jQuery(form), lock = false, validator,
         options: JQueryValidation.ValidationOptions = {
             submitHandler: async (form: HTMLFormElement, e: JQueryEventObject) => {
@@ -44,7 +42,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax
                 }
                 lock = true;
                 try {
-                    let data = await ajax($.extend({
+                    let data = await (ajax || jQuery.ajax)($.extend({
                         method: $form.attr('method'),
                         url: $form.attr('action'),
                         data: $form.serialize(),
@@ -79,10 +77,14 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax
 }
 
 let datepickerInitialize = async () => {
-    datepickerInitialize = async () => void 0;
-    SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css');
-    await SystemJS.import(`bootstrap-datepicker`);
-    await SystemJS.import(`bootstrap-datepicker/locales/bootstrap-datepicker.${locale}.min`);
+    let promise = Promise.all([
+        SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css'),
+        SystemJS.import(`bootstrap-datepicker`),
+        SystemJS.import(`bootstrap-datepicker/locales/bootstrap-datepicker.${locale}.min`)
+    ]);
+    datepickerInitialize = async () => promise;
+
+    return promise;
 };
 
 export async function datepicker(el: HTMLDivElement | HTMLInputElement, options: DatepickerOptions = {}): Promise<JQuery<HTMLDivElement | HTMLInputElement>> {
