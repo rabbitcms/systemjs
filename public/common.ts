@@ -1,3 +1,4 @@
+///<reference path="common.d.ts"/>
 ///<reference path="node_modules/@types/systemjs/index.d.ts"/>
 ///<reference path="node_modules/@types/jquery.validation/index.d.ts"/>
 ///<reference path="node_modules/@types/bootstrap-datepicker/index.d.ts"/>
@@ -98,17 +99,18 @@ export async function scan(element: Element) {
     let list = element.querySelectorAll('[data-require]');
     for (let i = 0; i < list.length; ++i) {
         (async (element: Element) => {
-            let module = await SystemJS.import(<string>element.getAttribute('data-require'));
+            let module = await SystemJS.import(<string>element.getAttribute('data-require')),
+                param = element.getAttribute('data-param');
 
             if (element.hasAttribute('data-bind')) {
                 element.addEventListener('click', async (e) => {
                     e.preventDefault();
-                    await module[<string>element.getAttribute('data-bind')]();
+                    await module[<string>element.getAttribute('data-bind')](param);
                 });
             }
 
             if (element.hasAttribute('data-import')) {
-                await module[<string>element.getAttribute('data-import')](element, element.getAttribute('data-param'));
+                await module[<string>element.getAttribute('data-import')](element, param);
             }
 
         })(list.item(i)).catch(console.log);
@@ -125,10 +127,15 @@ let youtubeBackgroundInitialize = (): Promise<void> => {
     return promise;
 };
 
-export async function youtubeBackground(el: HTMLElement, options?) {
+export async function youtubeBackground(el?: HTMLElement, options?) {
     await youtubeBackgroundInitialize();
+    if (!el) return;
     if (!el.id) {
         el.id = "bgyt" + new Date().getTime()
     }
     jQuery(`#${el.id}`).YTPlayer(options || {});
+}
+
+export function sleep(ms: number): Promise<void> {
+    return new Promise((r) => setTimeout(r, ms));
 }

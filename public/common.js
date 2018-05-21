@@ -119,19 +119,19 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                 for (i = 0; i < list.length; ++i) {
                     (function (element) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                         var _this = this;
-                        var module;
+                        var module, param;
                         return tslib_1.__generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4 /*yield*/, SystemJS.import(element.getAttribute('data-require'))];
                                 case 1:
-                                    module = _a.sent();
+                                    module = _a.sent(), param = element.getAttribute('data-param');
                                     if (element.hasAttribute('data-bind')) {
                                         element.addEventListener('click', function (e) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                             return tslib_1.__generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
                                                         e.preventDefault();
-                                                        return [4 /*yield*/, module[element.getAttribute('data-bind')]()];
+                                                        return [4 /*yield*/, module[element.getAttribute('data-bind')](param)];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -140,7 +140,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                         }); });
                                     }
                                     if (!element.hasAttribute('data-import')) return [3 /*break*/, 3];
-                                    return [4 /*yield*/, module[element.getAttribute('data-import')](element, element.getAttribute('data-param'))];
+                                    return [4 /*yield*/, module[element.getAttribute('data-import')](element, param)];
                                 case 2:
                                     _a.sent();
                                     _a.label = 3;
@@ -161,6 +161,8 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                     case 0: return [4 /*yield*/, youtubeBackgroundInitialize()];
                     case 1:
                         _a.sent();
+                        if (!el)
+                            return [2 /*return*/];
                         if (!el.id) {
                             el.id = "bgyt" + new Date().getTime();
                         }
@@ -171,6 +173,10 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         });
     }
     exports_1("youtubeBackground", youtubeBackground);
+    function sleep(ms) {
+        return new Promise(function (r) { return setTimeout(r, ms); });
+    }
+    exports_1("sleep", sleep);
     var _this, tslib_1, jquery_1, locale, locales, validationInitialize, datepickerInitialize, youtubeBackgroundInitialize;
     return {
         setters: [
