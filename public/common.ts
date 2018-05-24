@@ -133,7 +133,9 @@ export async function youtubeBackground(el?: HTMLElement, options?) {
     if (!el.id) {
         el.id = "bgyt" + new Date().getTime()
     }
-    jQuery(`#${el.id}`).YTPlayer(options || {});
+    let $el = jQuery(`#${el.id}`);
+    $el.YTPlayer(options || {});
+    $el.triggerHandler('init');
 }
 
 export function sleep(ms: number): Promise<void> {

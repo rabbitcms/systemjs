@@ -19,7 +19,6 @@ System.register(["jquery", "jquery.validation"], function (exports_1, context_1)
                 return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/.test(value);
             });
             jquery_1.default.validator.addMethod('notEqualTo', function (value, element, param) {
-                // Bind to the blur event of the target in order to revalidate whenever the target field is updated
                 var target = jquery_1.default(param);
                 if (this.settings.onfocusout && target.not(".validate-equalTo-blur").length) {
                     target.addClass("validate-equalTo-blur").on("blur.validate-equalTo", function () {

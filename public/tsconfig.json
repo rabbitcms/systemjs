@@ -6,10 +6,13 @@
         "target": "es5",
         "importHelpers": true,
         "strict": true,
+        "experimentalDecorators": true,
+        "removeComments": true,
         "lib": [
             "dom",
             "es5",
-            "es2015.promise"
+            "es2015.promise",
+            "es2015.symbol"
         ],
         "baseUrl": ".",
         "paths": {

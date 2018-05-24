@@ -5,17 +5,12 @@ System.register([], function (exports_1, context_1) {
     return {
         setters: [],
         execute: function () {
-            EventEmitter = /** @class */ (function () {
+            EventEmitter = (function () {
                 function EventEmitter() {
                     this._events = {};
                 }
                 EventEmitter.prototype.onSubscribe = function (eventName, fn) {
                 };
-                /**
-                 * @param {string} eventName
-                 * @param {Function} fn
-                 * @returns {this}
-                 */
                 EventEmitter.prototype.subscribe = function (eventName, fn, once) {
                     if (once === void 0) { once = false; }
                     if (!this._events[eventName]) {
@@ -25,11 +20,6 @@ System.register([], function (exports_1, context_1) {
                     this.onSubscribe(eventName, fn);
                     return this;
                 };
-                /**
-                 * @param {string} eventName
-                 * @param {Function} fn
-                 * @returns {this}
-                 */
                 EventEmitter.prototype.unsubscribe = function (eventName, fn) {
                     if (this._events[eventName]) {
                         this._events[eventName] = this._events[eventName].filter(function (e) {
@@ -38,12 +28,6 @@ System.register([], function (exports_1, context_1) {
                     }
                     return this;
                 };
-                /**
-                 *
-                 * @param {string} eventName
-                 * @param {Function} fn
-                 * @returns {EventEmitter}
-                 */
                 EventEmitter.prototype.once = function (eventName, fn) {
                     return this.subscribe(eventName, fn, true);
                 };
@@ -64,15 +48,11 @@ System.register([], function (exports_1, context_1) {
                 return EventEmitter;
             }());
             exports_1("EventEmitter", EventEmitter);
-            StaticEventEmitter = /** @class */ (function () {
+            StaticEventEmitter = (function () {
                 function StaticEventEmitter() {
                 }
                 StaticEventEmitter.onSubscribe = function (eventName, fn) {
                 };
-                /**
-                 * @param {string} eventName
-                 * @param {Function} fn
-                 */
                 StaticEventEmitter.subscribe = function (eventName, fn) {
                     if (!this._events[eventName]) {
                         this._events[eventName] = [];
@@ -80,20 +60,11 @@ System.register([], function (exports_1, context_1) {
                     this._events[eventName].push(fn);
                     this.onSubscribe(eventName, fn);
                 };
-                /**
-                 * @param {string} eventName
-                 * @param {Function} fn
-                 */
                 StaticEventEmitter.unsubscribe = function (eventName, fn) {
                     if (this._events[eventName]) {
                         this._events[eventName] = this._events[eventName].filter(function (e) { return e !== fn; });
                     }
                 };
-                /**
-                 *
-                 * @param {string} eventName
-                 * @param {Function} fn
-                 */
                 StaticEventEmitter.once = function (eventName, fn) {
                     var _this = this;
                     var func = function () {
