@@ -81,8 +81,7 @@ let datepickerInitialize = async () => {
     let promise = Promise.all([
         SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css'),
         SystemJS.import(`bootstrap-datepicker`),
-        SystemJS.import(`bootstrap-datepicker/locales/bootstrap-datepicker.${locale}.min`)
-    ]);
+    ]).then(() => SystemJS.import(`bootstrap-datepicker/locales/bootstrap-datepicker.${locale}.min`));
     datepickerInitialize = async () => promise;
 
     return promise;

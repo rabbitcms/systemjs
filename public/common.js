@@ -210,8 +210,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                     promise = Promise.all([
                         SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css'),
                         SystemJS.import("bootstrap-datepicker"),
-                        SystemJS.import("bootstrap-datepicker/locales/bootstrap-datepicker." + locale + ".min")
-                    ]);
+                    ]).then(function () { return SystemJS.import("bootstrap-datepicker/locales/bootstrap-datepicker." + locale + ".min"); });
                     datepickerInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
                         return [2, promise];
                     }); }); };
