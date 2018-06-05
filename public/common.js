@@ -2,7 +2,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
-    function validate(form, options) {
+    function validate(form, event, options) {
         if (options === void 0) { options = {}; }
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             return tslib_1.__generator(this, function (_a) {
@@ -28,7 +28,22 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         });
     }
     exports_1("validate", validate);
-    function form(form, ajax) {
+    function crossAjax(settings) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, jquery_1.default.ajax(jquery_1.default.extend(true, {
+                            xhrFields: {
+                                withCredentials: true
+                            },
+                            crossDomain: true
+                        }, settings))];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    }
+    function form(form, e, ajax) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
             var $form, lock, validator, options;
@@ -49,7 +64,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             _a.label = 1;
                                         case 1:
                                             _a.trys.push([1, , 3, 4]);
-                                            return [4, (ajax || jquery_1.default.ajax)($.extend({
+                                            return [4, (ajax === 'cross' ? crossAjax : ajax || jquery_1.default.ajax)($.extend({
                                                     method: $form.attr('method'),
                                                     url: $form.attr('action'),
                                                     data: $form.serialize(),
@@ -87,14 +102,14 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                             }); }
                         };
                         $form.triggerHandler('init', options);
-                        return [4, validate(form, options)];
+                        return [4, validate(form, e, options)];
                     case 1: return [2, validator = _a.sent()];
                 }
             });
         });
     }
     exports_1("form", form);
-    function datepicker(el, options) {
+    function datepicker(el, event, options) {
         if (options === void 0) { options = {}; }
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             return tslib_1.__generator(this, function (_a) {
@@ -113,52 +128,45 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
     function scan(element) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var list, i, j;
+            var list, i, j, attr, matches;
             return tslib_1.__generator(this, function (_a) {
                 list = element.querySelectorAll(events.map(function (e) { return "[data-on-" + e + "]"; }).concat(['[data-require]']).join(','));
                 for (i = 0; i < list.length; ++i) {
+                    element = list.item(i);
                     for (j = 0; j < element.attributes.length; ++j) {
-                        (function (element, attr) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                            var _this = this;
-                            var params, f, matches;
-                            return tslib_1.__generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        params = attr.value.split(',');
-                                        f = function (event) {
-                                            if (event === void 0) { event = null; }
-                                            return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                                var module;
-                                                return tslib_1.__generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4, SystemJS.import(params[0])];
-                                                        case 1:
-                                                            module = _a.sent();
-                                                            if (!(params.length > 1)) return [3, 3];
-                                                            return [4, module[params[1]].apply(module, [element, event].concat(params.slice(2)))];
-                                                        case 2:
-                                                            _a.sent();
-                                                            _a.label = 3;
-                                                        case 3: return [2];
-                                                    }
-                                                });
-                                            });
-                                        };
-                                        matches = /^data-on-(.*)$/.exec(attr.name);
-                                        if (!matches) return [3, 1];
-                                        element.addEventListener(matches[1], function (event) {
-                                            event.preventDefault();
-                                            f(event).catch(console.log);
+                        attr = list.item(i).attributes.item(j), matches = /^(data-require|data-on-(.*))(-\d+)?$/.exec(attr.name);
+                        if (matches)
+                            (function (element, value, event) {
+                                var params = value.split(',');
+                                var f = function (event) {
+                                    if (event === void 0) { event = null; }
+                                    return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                        var module;
+                                        return tslib_1.__generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4, SystemJS.import(params[0])];
+                                                case 1:
+                                                    module = _a.sent();
+                                                    if (!(params.length > 1)) return [3, 3];
+                                                    return [4, module[params[1]].apply(module, [element, event].concat(params.slice(2)))];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2];
+                                            }
                                         });
-                                        return [3, 3];
-                                    case 1: return [4, f()];
-                                    case 2:
-                                        _a.sent();
-                                        _a.label = 3;
-                                    case 3: return [2];
+                                    });
+                                };
+                                if (event) {
+                                    element.addEventListener(event, function (event) {
+                                        event.preventDefault();
+                                        f(event).catch(console.log);
+                                    });
                                 }
-                            });
-                        }); })(list.item(i), list.item(i).attributes.item(j)).catch(console.log);
+                                else {
+                                    f().catch(console.log);
+                                }
+                            })(element, attr.value, matches[2] || null);
                     }
                 }
                 return [2];
@@ -166,7 +174,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         });
     }
     exports_1("scan", scan);
-    function youtubeBackground(el, options) {
+    function youtubeBackground(element, event, options) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var $el;
             return tslib_1.__generator(this, function (_a) {
@@ -174,12 +182,12 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                     case 0: return [4, youtubeBackgroundInitialize()];
                     case 1:
                         _a.sent();
-                        if (!el)
+                        if (!element)
                             return [2];
-                        if (!el.id) {
-                            el.id = "bgyt" + new Date().getTime();
+                        if (!element.id) {
+                            element.id = "bgyt" + new Date().getTime();
                         }
-                        $el = jquery_1.default("#" + el.id);
+                        $el = jquery_1.default("#" + element.id);
                         $el.YTPlayer(options || {});
                         $el.triggerHandler('init');
                         return [2];

@@ -17,7 +17,7 @@ let locales = ['uk', 'ru'],
         return promise;
     };
 
-export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
+export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, event: Event | null, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
     await validationInitialize();
     return jQuery(form).validate(jQuery.extend({
         ignore: '',
@@ -34,7 +34,16 @@ export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, 
     }, options));
 }
 
-export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax?: (settings?: JQuery.AjaxSettings) => Promise<any>): Promise<JQueryValidation.Validator> {
+async function crossAjax(settings?: JQuery.AjaxSettings): Promise<any> {
+    return await jQuery.ajax(jQuery.extend(true, {
+        xhrFields: {
+            withCredentials: true
+        },
+        crossDomain: true
+    }, settings));
+}
+
+export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: Event | null, ajax?: ((settings?: JQuery.AjaxSettings) => Promise<any>) | string): Promise<JQueryValidation.Validator> {
     let $form = jQuery(form), lock = false, validator,
         options: JQueryValidation.ValidationOptions = {
             submitHandler: async (form: HTMLFormElement, e: JQueryEventObject) => {
@@ -44,7 +53,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax
                 }
                 lock = true;
                 try {
-                    let data = await (ajax || jQuery.ajax)($.extend({
+                    let data = await (ajax === 'cross' ? crossAjax : <(settings?: JQuery.AjaxSettings) => Promise<any>>ajax || jQuery.ajax)($.extend({
                         method: $form.attr('method'),
                         url: $form.attr('action'),
                         data: $form.serialize(),
@@ -75,7 +84,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, ajax
             }
         };
     $form.triggerHandler('init', options);
-    return validator = await validate(form, options);
+    return validator = await validate(form, e, options);
 }
 
 let datepickerInitialize = async () => {
@@ -88,7 +97,7 @@ let datepickerInitialize = async () => {
     return promise;
 };
 
-export async function datepicker(el: HTMLDivElement | HTMLInputElement, options: DatepickerOptions = {}): Promise<JQuery<HTMLDivElement | HTMLInputElement>> {
+export async function datepicker(el: HTMLDivElement | HTMLInputElement, event: Event | null, options: DatepickerOptions = {}): Promise<JQuery<HTMLDivElement | HTMLInputElement>> {
     await datepickerInitialize();
     return <JQuery<HTMLDivElement | HTMLInputElement>>jQuery(el).datepicker(jQuery.extend(options, {
         language: locale
@@ -98,26 +107,29 @@ export async function datepicker(el: HTMLDivElement | HTMLInputElement, options:
 export async function scan(element: Element) {
     let list = element.querySelectorAll(events.map((e) => `[data-on-${e}]`).concat(['[data-require]']).join(','));
     for (let i = 0; i < list.length; ++i) {
+        element = list.item(i);
         for (let j = 0; j < element.attributes.length; ++j) {
-            (async (element: Element, attr: Attr) => {
-                let params = attr.value.split(',');
-                let f = async (event: Event | null = null) => {
-                    let module = await SystemJS.import(params[0]);
-                    if (params.length > 1) {
-                        await module[params[1]](element, event, ...params.slice(2))
-                    }
-                };
+            let attr: Attr = <Attr>list.item(i).attributes.item(j),
+                matches = /^(data-require|data-on-(.*))(-\d+)?$/.exec(attr.name);
+            if (matches)
+                ((element: Element, value: string, event: string | null) => {
+                    let params = value.split(',');
+                    let f = async (event: Event | null = null) => {
+                        let module = await SystemJS.import(params[0]);
+                        if (params.length > 1) {
+                            await module[params[1]](element, event, ...params.slice(2))
+                        }
+                    };
 
-                let matches = /^data-on-(.*)$/.exec(attr.name);
-                if (matches) {
-                    element.addEventListener(matches[1], (event: Event) => {
-                        event.preventDefault();
-                        f(event).catch(console.log);
-                    });
-                } else {
-                    await f()
-                }
-            })(list.item(i), <Attr>list.item(i).attributes.item(j)).catch(console.log);
+                    if (event) {
+                        element.addEventListener(event, (event: Event) => {
+                            event.preventDefault();
+                            f(event).catch(console.log);
+                        });
+                    } else {
+                         f().catch(console.log);
+                    }
+                })(element, attr.value, matches[2] || null);
         }
     }
 }
@@ -132,13 +144,13 @@ let youtubeBackgroundInitialize = (): Promise<void> => {
     return promise;
 };
 
-export async function youtubeBackground(el?: HTMLElement, options?) {
+export async function youtubeBackground(element: HTMLElement, event: Event | null, options?) {
     await youtubeBackgroundInitialize();
-    if (!el) return;
-    if (!el.id) {
-        el.id = "bgyt" + new Date().getTime()
+    if (!element) return;
+    if (!element.id) {
+        element.id = "bgyt" + new Date().getTime()
     }
-    let $el = jQuery(`#${el.id}`);
+    let $el = jQuery(`#${element.id}`);
     $el.YTPlayer(options || {});
     $el.triggerHandler('init');
 }
