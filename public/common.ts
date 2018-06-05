@@ -5,6 +5,7 @@
 import jQuery from 'jquery';
 
 export let locale: string = document.documentElement.getAttribute('lang') || '';
+export let events = ['click', 'dblclick', 'contextmenu', 'wheel', 'mouseleave', 'mouseout', 'focus', 'blur', 'reset', 'submit', 'scroll', 'resize', 'keydown', 'keypress', 'keyup', 'mouseenter', 'mouseover', 'mousemove', 'mousedown', 'mouseup'];
 
 let locales = ['uk', 'ru'],
     validationInitialize = async (): Promise<void> => {
@@ -95,24 +96,29 @@ export async function datepicker(el: HTMLDivElement | HTMLInputElement, options:
 }
 
 export async function scan(element: Element) {
-    let list = element.querySelectorAll('[data-require]');
+    let list = element.querySelectorAll(events.map((e) => `[data-on-${e}]`).concat(['[data-require]']).join(','));
     for (let i = 0; i < list.length; ++i) {
-        (async (element: Element) => {
-            let module = await SystemJS.import(<string>element.getAttribute('data-require')),
-                param = element.getAttribute('data-param');
+        for (let j = 0; j < element.attributes.length; ++j) {
+            (async (element: Element, attr: Attr) => {
+                let params = attr.value.split(',');
+                let f = async (event: Event | null = null) => {
+                    let module = await SystemJS.import(params[0]);
+                    if (params.length > 1) {
+                        await module[params[1]](element, event, ...params.slice(2))
+                    }
+                };
 
-            if (element.hasAttribute('data-bind')) {
-                element.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await module[<string>element.getAttribute('data-bind')](param);
-                });
-            }
-
-            if (element.hasAttribute('data-import')) {
-                await module[<string>element.getAttribute('data-import')](element, param);
-            }
-
-        })(list.item(i)).catch(console.log);
+                let matches = /^data-on-(.*)$/.exec(attr.name);
+                if (matches) {
+                    element.addEventListener(matches[1], (event: Event) => {
+                        event.preventDefault();
+                        f(event).catch(console.log);
+                    });
+                } else {
+                    await f()
+                }
+            })(list.item(i), <Attr>list.item(i).attributes.item(j)).catch(console.log);
+        }
     }
 }
 
@@ -139,4 +145,18 @@ export async function youtubeBackground(el?: HTMLElement, options?) {
 
 export function sleep(ms: number): Promise<void> {
     return new Promise((r) => setTimeout(r, ms));
+}
+
+
+export async function dirtyForm(el: HTMLFormElement | JQuery<HTMLFormElement>) {
+    await SystemJS.import('cdnjs/jquery.dirtyforms/2.0.0/jquery.dirtyforms.min.js');
+    let $el = jQuery(el);
+    $el.dirtyForms({
+        ignoreSelector: '.ignore'
+    }).on('dirty.dirtyforms clean.dirtyforms', (e) => {
+        let buttons = $el.find('[type="reset"],[type="submit"]');
+        buttons.prop('disabled', e.type !== 'dirty');
+    }).on('success', () => {
+        $el.dirtyForms('setClean');
+    });
 }

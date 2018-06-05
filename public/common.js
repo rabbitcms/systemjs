@@ -113,41 +113,53 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
     function scan(element) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var list, i;
+            var list, i, j;
             return tslib_1.__generator(this, function (_a) {
-                list = element.querySelectorAll('[data-require]');
+                list = element.querySelectorAll(events.map(function (e) { return "[data-on-" + e + "]"; }).concat(['[data-require]']).join(','));
                 for (i = 0; i < list.length; ++i) {
-                    (function (element) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                        var _this = this;
-                        var module, param;
-                        return tslib_1.__generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, SystemJS.import(element.getAttribute('data-require'))];
-                                case 1:
-                                    module = _a.sent(), param = element.getAttribute('data-param');
-                                    if (element.hasAttribute('data-bind')) {
-                                        element.addEventListener('click', function (e) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                            return tslib_1.__generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        e.preventDefault();
-                                                        return [4, module[element.getAttribute('data-bind')](param)];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2];
-                                                }
+                    for (j = 0; j < element.attributes.length; ++j) {
+                        (function (element, attr) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            var _this = this;
+                            var params, f, matches;
+                            return tslib_1.__generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        params = attr.value.split(',');
+                                        f = function (event) {
+                                            if (event === void 0) { event = null; }
+                                            return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                                var module;
+                                                return tslib_1.__generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4, SystemJS.import(params[0])];
+                                                        case 1:
+                                                            module = _a.sent();
+                                                            if (!(params.length > 1)) return [3, 3];
+                                                            return [4, module[params[1]].apply(module, [element, event].concat(params.slice(2)))];
+                                                        case 2:
+                                                            _a.sent();
+                                                            _a.label = 3;
+                                                        case 3: return [2];
+                                                    }
+                                                });
                                             });
-                                        }); });
-                                    }
-                                    if (!element.hasAttribute('data-import')) return [3, 3];
-                                    return [4, module[element.getAttribute('data-import')](element, param)];
-                                case 2:
-                                    _a.sent();
-                                    _a.label = 3;
-                                case 3: return [2];
-                            }
-                        });
-                    }); })(list.item(i)).catch(console.log);
+                                        };
+                                        matches = /^data-on-(.*)$/.exec(attr.name);
+                                        if (!matches) return [3, 1];
+                                        element.addEventListener(matches[1], function (event) {
+                                            event.preventDefault();
+                                            f(event).catch(console.log);
+                                        });
+                                        return [3, 3];
+                                    case 1: return [4, f()];
+                                    case 2:
+                                        _a.sent();
+                                        _a.label = 3;
+                                    case 3: return [2];
+                                }
+                            });
+                        }); })(list.item(i), list.item(i).attributes.item(j)).catch(console.log);
+                    }
                 }
                 return [2];
             });
@@ -180,7 +192,30 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         return new Promise(function (r) { return setTimeout(r, ms); });
     }
     exports_1("sleep", sleep);
-    var _this, tslib_1, jquery_1, locale, locales, validationInitialize, datepickerInitialize, youtubeBackgroundInitialize;
+    function dirtyForm(el) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var $el;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, SystemJS.import('cdnjs/jquery.dirtyforms/2.0.0/jquery.dirtyforms.min.js')];
+                    case 1:
+                        _a.sent();
+                        $el = jquery_1.default(el);
+                        $el.dirtyForms({
+                            ignoreSelector: '.ignore'
+                        }).on('dirty.dirtyforms clean.dirtyforms', function (e) {
+                            var buttons = $el.find('[type="reset"],[type="submit"]');
+                            buttons.prop('disabled', e.type !== 'dirty');
+                        }).on('success', function () {
+                            $el.dirtyForms('setClean');
+                        });
+                        return [2];
+                }
+            });
+        });
+    }
+    exports_1("dirtyForm", dirtyForm);
+    var _this, tslib_1, jquery_1, locale, events, locales, validationInitialize, datepickerInitialize, youtubeBackgroundInitialize;
     return {
         setters: [
             function (tslib_1_1) {
@@ -192,6 +227,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         ],
         execute: function () {
             exports_1("locale", locale = document.documentElement.getAttribute('lang') || '');
+            exports_1("events", events = ['click', 'dblclick', 'contextmenu', 'wheel', 'mouseleave', 'mouseout', 'focus', 'blur', 'reset', 'submit', 'scroll', 'resize', 'keydown', 'keypress', 'keyup', 'mouseenter', 'mouseover', 'mousemove', 'mousedown', 'mouseup']);
             locales = ['uk', 'ru'], validationInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                 var promise;
                 return tslib_1.__generator(this, function (_a) {
