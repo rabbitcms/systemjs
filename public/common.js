@@ -43,14 +43,18 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
             });
         });
     }
-    function form(form, e, ajax) {
+    function form(form, e) {
+        var args = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            args[_i - 2] = arguments[_i];
+        }
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var $form, lock, validator, options;
+            var $form, ajax, handler, lock, validator, options;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        $form = jquery_1.default(form), lock = false, options = {
+                        $form = jquery_1.default(form), ajax = jquery_1.default.ajax, handler = function () { return true; }, lock = false, options = {
                             submitHandler: function (form, e) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var data;
                                 return tslib_1.__generator(this, function (_a) {
@@ -64,7 +68,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             _a.label = 1;
                                         case 1:
                                             _a.trys.push([1, , 3, 4]);
-                                            return [4, (ajax === 'cross' ? crossAjax : ajax || jquery_1.default.ajax)($.extend({
+                                            return [4, ajax($.extend({
                                                     method: $form.attr('method'),
                                                     url: $form.attr('action'),
                                                     data: $form.serialize(),
@@ -90,6 +94,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                                     : {}))];
                                         case 2:
                                             data = _a.sent();
+                                            handler(data);
                                             $form.triggerHandler('success', data);
                                             return [3, 4];
                                         case 3:
@@ -102,6 +107,60 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                             }); }
                         };
                         $form.triggerHandler('init', options);
+                        args.forEach(function (arg) {
+                            if (arg instanceof Function) {
+                                ajax = arg;
+                                return;
+                            }
+                            switch (arg) {
+                                case 'cross':
+                                    ajax = crossAjax;
+                                    break;
+                                case 'handle':
+                                    handler = function (data) {
+                                        if (!data || !data.action) {
+                                            return true;
+                                        }
+                                        switch (data.action) {
+                                            case 'redirect':
+                                            case 'location':
+                                                if (data.target) {
+                                                    window.open(data.location, data.target);
+                                                }
+                                                else {
+                                                    location.href = data.location;
+                                                }
+                                                break;
+                                            case 'form':
+                                            case 'open':
+                                                var form_1 = (function add(form, data, prefix) {
+                                                    $.each(data, function (name, value) {
+                                                        if (prefix) {
+                                                            name = prefix + '[' + name + ']';
+                                                        }
+                                                        if (value !== null && (typeof value === 'object' || Array.isArray(value))) {
+                                                            add(form, value, name);
+                                                        }
+                                                        else {
+                                                            form.append($('<input/>').attr('type', 'hidden')
+                                                                .attr('name', name)
+                                                                .attr('value', value));
+                                                        }
+                                                    });
+                                                    return form;
+                                                })($('<form/>')
+                                                    .attr('action', data.action)
+                                                    .attr('target', data.target || '')
+                                                    .attr('method', data.method || 'get')
+                                                    .css({ 'display': 'none' }).appendTo('body'), data.data);
+                                                form_1[0].submit();
+                                                form_1.remove();
+                                                break;
+                                        }
+                                        return false;
+                                    };
+                            }
+                        });
                         return [4, validate(form, e, options)];
                     case 1: return [2, validator = _a.sent()];
                 }

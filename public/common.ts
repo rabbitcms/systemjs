@@ -43,8 +43,11 @@ async function crossAjax(settings?: JQuery.AjaxSettings): Promise<any> {
     }, settings));
 }
 
-export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: Event | null, ajax?: ((settings?: JQuery.AjaxSettings) => Promise<any>) | string): Promise<JQueryValidation.Validator> {
-    let $form = jQuery(form), lock = false, validator,
+export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: Event | null, ...args): Promise<JQueryValidation.Validator> {
+    let $form = jQuery(form),
+        ajax: (settings?: JQuery.AjaxSettings) => Promise<any> = jQuery.ajax,
+        handler: (data?: any) => boolean = () => true,
+        lock = false, validator,
         options: JQueryValidation.ValidationOptions = {
             submitHandler: async (form: HTMLFormElement, e: JQueryEventObject) => {
                 e.preventDefault();
@@ -53,7 +56,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: E
                 }
                 lock = true;
                 try {
-                    let data = await (ajax === 'cross' ? crossAjax : <(settings?: JQuery.AjaxSettings) => Promise<any>>ajax || jQuery.ajax)($.extend({
+                    let data = await ajax($.extend({
                         method: $form.attr('method'),
                         url: $form.attr('action'),
                         data: $form.serialize(),
@@ -76,6 +79,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: E
                             contentType: false,
                         }
                         : {}));
+                    handler(data);
                     $form.triggerHandler('success', data);
                 } finally {
                     $form.removeClass('sending');
@@ -84,6 +88,61 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: E
             }
         };
     $form.triggerHandler('init', options);
+    args.forEach((arg) => {
+        if (arg instanceof Function) {
+            ajax = arg;
+            return;
+        }
+        switch (arg) {
+            case 'cross':
+                ajax = crossAjax;
+                break;
+            case 'handle':
+                handler = (data: any): boolean => {
+                    if (!data || !data.action) {
+                        return true;
+                    }
+                    switch (data.action) {
+                        case 'redirect':
+                        case 'location':
+                            if (data.target) {
+                                window.open(data.location, data.target);
+                            } else {
+                                location.href = data.location;
+                            }
+                            break;
+                        case 'form':
+                        case 'open':
+                            //untested.
+                            let form:JQuery<HTMLFormElement> = (function add(form:JQuery<HTMLFormElement>, data, prefix?:string):JQuery<HTMLFormElement> {
+                                $.each(data, function (name:string, value) {
+                                    if (prefix) {
+                                        name = prefix + '[' + name + ']';
+                                    }
+                                    if (value !== null && (typeof value === 'object' || Array.isArray(value))) {
+                                        add(form, value, name);
+                                    } else {
+                                        form.append($('<input/>').attr('type', 'hidden')
+                                            .attr('name', name)
+                                            .attr('value', value));
+                                    }
+                                });
+                                return form;
+                            })(<JQuery<HTMLFormElement>>$('<form/>')
+                                    .attr('action', data.action)
+                                    .attr('target', data.target || '')
+                                    .attr('method', data.method || 'get')
+                                    .css({'display': 'none'}).appendTo('body'),
+                                data.data);
+                            form[0].submit();
+                            form.remove();
+                            break;
+                    }
+                    return false;
+                }
+
+        }
+    });
     return validator = await validate(form, e, options);
 }
 
@@ -127,7 +186,7 @@ export async function scan(element: Element) {
                             f(event).catch(console.log);
                         });
                     } else {
-                         f().catch(console.log);
+                        f().catch(console.log);
                     }
                 })(element, attr.value, matches[2] || null);
         }
