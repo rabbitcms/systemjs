@@ -23,6 +23,7 @@ class MakeConfigJob
     {
         $config = self::module()->config(null, []);
         $prepare = [
+            'config' => [$config['config'] ?? []],
             'map' => [$config['map'] ?? []],
             'paths' => [$config['paths'] ?? []],
             'meta' => [$config['meta'] ?? []],
