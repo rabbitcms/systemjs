@@ -5,7 +5,7 @@ unset($config['config']);
 ?>
 SystemJS.config({!! \json_encode(
 $config,
-JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT
+JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 )!!});
 
 SystemJS.register('config', [], function(export1) {
@@ -14,8 +14,8 @@ SystemJS.register('config', [], function(export1) {
         setters: [],
         execute: function () {
             export1({!! \json_encode(
-            $main,
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT
+            $main ?: new stdClass(),
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
             )!!});
         }
     };
