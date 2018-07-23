@@ -56,6 +56,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: E
                 }
                 lock = true;
                 try {
+                    $form.addClass('sending');
                     let data = await ajax($.extend({
                         method: $form.attr('method'),
                         url: $form.attr('action'),

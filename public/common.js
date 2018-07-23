@@ -68,6 +68,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             _a.label = 1;
                                         case 1:
                                             _a.trys.push([1, , 3, 4]);
+                                            $form.addClass('sending');
                                             return [4, ajax($.extend({
                                                     method: $form.attr('method'),
                                                     url: $form.attr('action'),
