@@ -76,7 +76,7 @@ return [
             'main' => 'common',
             'defaultExtension' => 'js?' . time(),
             'meta' => [
-                'validation/*' => [
+                'validation/localization/*' => [
                     'format' => 'global'
                 ]
             ]

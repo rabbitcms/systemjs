@@ -12,7 +12,7 @@ let locales = ['uk', 'ru'],
         let promise = SystemJS.import(`jquery.validation`)
             .then(() => SystemJS.import(`@common/validation/methods`))
             .then(() => SystemJS.import(`jquery.validation/localization/messages_${locale}`))
-            .then(() => locales.indexOf(locale) >= 0 && SystemJS.import(`@common/validation/${locale}`));
+            .then(() => locales.indexOf(locale) >= 0 && SystemJS.import(`@common/validation/localization/${locale}`));
         validationInitialize = () => promise;
         return promise;
     };

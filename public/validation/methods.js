@@ -1,7 +1,7 @@
 System.register(["jquery", "jquery.validation"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var jquery_1;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (jquery_1_1) {

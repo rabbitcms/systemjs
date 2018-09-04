@@ -1,5 +1,6 @@
 System.register(["tslib", "jquery"], function (exports_1, context_1) {
     "use strict";
+    var _this, tslib_1, jquery_1, locale, events, locales, validationInitialize, datepickerInitialize, youtubeBackgroundInitialize;
     _this = this;
     var __moduleName = context_1 && context_1.id;
     function validate(form, event, options) {
@@ -49,8 +50,8 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
             args[_i - 2] = arguments[_i];
         }
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _this = this;
             var $form, ajax, handler, lock, validator, options;
+            var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -187,8 +188,8 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
     exports_1("datepicker", datepicker);
     function scan(element) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _this = this;
             var list, i, j, attr, matches;
+            var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 list = element.querySelectorAll(events.map(function (e) { return "[data-on-" + e + "]"; }).concat(['[data-require]']).join(','));
                 for (i = 0; i < list.length; ++i) {
@@ -283,7 +284,6 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
         });
     }
     exports_1("dirtyForm", dirtyForm);
-    var _this, tslib_1, jquery_1, locale, events, locales, validationInitialize, datepickerInitialize, youtubeBackgroundInitialize;
     return {
         setters: [
             function (tslib_1_1) {
@@ -302,14 +302,14 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                     promise = SystemJS.import("jquery.validation")
                         .then(function () { return SystemJS.import("@common/validation/methods"); })
                         .then(function () { return SystemJS.import("jquery.validation/localization/messages_" + locale); })
-                        .then(function () { return locales.indexOf(locale) >= 0 && SystemJS.import("@common/validation/" + locale); });
+                        .then(function () { return locales.indexOf(locale) >= 0 && SystemJS.import("@common/validation/localization/" + locale); });
                     validationInitialize = function () { return promise; };
                     return [2, promise];
                 });
             }); };
             datepickerInitialize = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                var _this = this;
                 var promise;
+                var _this = this;
                 return tslib_1.__generator(this, function (_a) {
                     promise = Promise.all([
                         SystemJS.import('bootstrap-datepicker/css/bootstrap-datepicker3.min.css'),
