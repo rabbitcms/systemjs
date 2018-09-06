@@ -57,7 +57,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                     case 0:
                         $form = jquery_1.default(form), ajax = jquery_1.default.ajax, handler = function () { return true; }, lock = false, options = {
                             submitHandler: function (form, e) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var data;
+                                var data, e_1;
                                 return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -68,7 +68,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             lock = true;
                                             _a.label = 1;
                                         case 1:
-                                            _a.trys.push([1, , 3, 4]);
+                                            _a.trys.push([1, 3, 4, 5]);
                                             $form.addClass('sending');
                                             return [4, ajax($.extend({
                                                     method: $form.attr('method'),
@@ -98,12 +98,16 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             data = _a.sent();
                                             handler(data);
                                             $form.triggerHandler('success', data);
-                                            return [3, 4];
+                                            return [3, 5];
                                         case 3:
+                                            e_1 = _a.sent();
+                                            $form.triggerHandler('error', e_1);
+                                            return [3, 5];
+                                        case 4:
                                             $form.removeClass('sending');
                                             lock = false;
                                             return [7];
-                                        case 4: return [2];
+                                        case 5: return [2];
                                     }
                                 });
                             }); }

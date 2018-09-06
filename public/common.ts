@@ -82,6 +82,8 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: E
                         : {}));
                     handler(data);
                     $form.triggerHandler('success', data);
+                } catch (e) {
+                    $form.triggerHandler('error', e);
                 } finally {
                     $form.removeClass('sending');
                     lock = false;
