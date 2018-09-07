@@ -4,27 +4,28 @@ declare(strict_types=1);
 return [
     'systemjs' => true,
     'paths' => [
-        'unpkg/' => 'https://unpkg.com/',
-        'cdnjs/' => 'https://cdnjs.cloudflare.com/ajax/libs/'
+        'cdnjs/' => 'https://cdnjs.cloudflare.com/ajax/libs/',
+        'jsdelivr/' => 'https://cdn.jsdelivr.net/',
+        'npm/' => 'https://cdn.jsdelivr.net/npm/',
     ],
     'map' => [
-        'css' => 'unpkg/systemjs-plugin-css@0.1.37/css.js',
-        'less' => 'unpkg/systemjs-plugin-less/less.js',
-        'text' => 'unpkg/systemjs-plugin-text/text.js',
-        'json' => 'unpkg/systemjs-plugin-json/json.js',
-        'lesscss' => 'cdnjs/less.js/3.0.1/less.min.js',
-        'jquery' => 'cdnjs/jquery/3.3.1/jquery.min.js',
-        'tslib' => 'cdnjs/tslib/1.9.0/tslib.min.js',
-        'select2' => 'cdnjs/select2/4.0.3/js/select2.min.js',
-        'jquery.validation' => 'cdnjs/jquery-validate/1.17.0',
-        'bootstrap-datepicker' => 'cdnjs/bootstrap-datepicker/1.8.0',
+        'css' => 'npm/systemjs-plugin-css@0.1.37/css.js',
+        'less' => 'npm/systemjs-plugin-less@0.1.2/less.js',
+        'text' => 'npm/systemjs-plugin-text@0.0.11/text.js',
+        'json' => 'npm/systemjs-plugin-json@0.3.0/json.js',
+        'lesscss' => 'npm/less@3/dist/less.min.js',
+        'jquery' => 'npm/jquery@3/dist/jquery.min.js',
+        'tslib' => 'npm/tslib@1/tslib.min.js',
+        'select2' => 'npm/select2@4.0/dist/js/select2.js',
+        'jquery.validation' => 'npm/jquery-validation@1.17/dist',
+        'bootstrap-datepicker' => 'npm/bootstrap-datepicker@1.8/dist',
         '@common' => '@systemjs/',
         'youtube' => 'https://www.youtube.com/iframe_api',
-        'jquery.mb.YTPlayer' => 'cdnjs/jquery.mb.YTPlayer/3.2.1',
+        'jquery.mb.YTPlayer' => 'npm/jquery.mb.ytplayer@3.2/dist',
     ],
     'depCache' => [
         'select2' => [
-            'cdnjs/select2/4.0.3/css/select2.min.css'
+            'npm/select2@4.0/dist/css/select2.min.css'
         ]
     ],
     'meta' => [
