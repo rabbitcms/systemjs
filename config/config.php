@@ -4,9 +4,9 @@ declare(strict_types=1);
 return [
     'systemjs' => true,
     'paths' => [
-        'cdnjs/' => 'https://cdnjs.cloudflare.com/ajax/libs/',
-        'jsdelivr/' => 'https://cdn.jsdelivr.net/',
-        'npm/' => 'https://cdn.jsdelivr.net/npm/',
+        'cdnjs/' => env('CDN_CDNJS', 'https://cdnjs.cloudflare.com/ajax/libs/'),
+        'jsdelivr/' => env('CDN_JSDELIVR', 'https://cdn.jsdelivr.net/'),
+        'npm/' => env('CDN_JSDELIVR_NPM', 'https://cdn.jsdelivr.net/npm/'),
     ],
     'map' => [
         'css' => 'npm/systemjs-plugin-css@0.1.37/css.js',
