@@ -110,7 +110,4 @@ export abstract class StaticEventEmitter {
             });
         }
     }
-
-
 }
-

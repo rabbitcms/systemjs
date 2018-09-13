@@ -17,7 +17,7 @@ let locales = ['uk', 'ru'],
         return promise;
     };
 
-export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, event: Event | null, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
+export async function validate(form: HTMLFormElement | JQuery<HTMLFormElement>, event?: Event | null, options: JQueryValidation.ValidationOptions = {}): Promise<JQueryValidation.Validator> {
     await validationInitialize();
     return jQuery(form).validate(jQuery.extend({
         ignore: '',
@@ -220,7 +220,6 @@ export async function youtubeBackground(element: HTMLElement, event: Event | nul
 export function sleep(ms: number): Promise<void> {
     return new Promise((r) => setTimeout(r, ms));
 }
-
 
 export async function dirtyForm(el: HTMLFormElement | JQuery<HTMLFormElement>) {
     await SystemJS.import('cdnjs/jquery.dirtyforms/2.0.0/jquery.dirtyforms.min.js');
