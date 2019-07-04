@@ -71,6 +71,7 @@ System.register(["tslib", "jquery"], function (exports_1, context_1) {
                                             _a.trys.push([1, 3, 4, 5]);
                                             $form.addClass('sending');
                                             return [4, ajax($.extend({
+                                                    headers: {'X-Requested-With': 'XMLHttpRequest'},
                                                     method: $form.attr('method'),
                                                     url: $form.attr('action'),
                                                     data: $form.serialize(),
