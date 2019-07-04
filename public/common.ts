@@ -58,6 +58,7 @@ export async function form(form: HTMLFormElement | JQuery<HTMLFormElement>, e: E
                 try {
                     $form.addClass('sending');
                     let data = await ajax($.extend({
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
                         method: $form.attr('method'),
                         url: $form.attr('action'),
                         data: $form.serialize(),
